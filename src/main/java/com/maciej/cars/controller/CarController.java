@@ -27,6 +27,11 @@ public class CarController {
         carService.prepareDummyData(number);
     }
 
+    @PostMapping("/populate2/{number}")
+    public void addCar2(@PathVariable long number) {
+        carService.prepareDummyData(number);
+    }
+
     @DeleteMapping("/{carId}")
     public void deleteCar(@PathVariable long carId) {
         carService.deleteCar(carId);
