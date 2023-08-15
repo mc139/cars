@@ -1,16 +1,22 @@
-package com.maciej.cars.dto;
+package com.maciej.cars.dto.car;
 
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 @Data
-public class CarDto {
-    private Long id;
+public class UpdateCarDto {
     private int yearOfManufacture;
+
     private int mileage;
+
     private BigDecimal basePrice;
+
     private String make;
+
     private String description;
+
+    private Set<Long> featureIds;
 
 }

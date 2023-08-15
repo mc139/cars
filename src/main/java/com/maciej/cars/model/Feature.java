@@ -1,4 +1,4 @@
-package com.maciej.cars;
+package com.maciej.cars.model;
 
 import com.maciej.cars.model.BaseEntity;
 import jakarta.persistence.Column;

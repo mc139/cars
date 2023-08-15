@@ -1,4 +1,4 @@
-package com.maciej.cars.dto;
+package com.maciej.cars.dto.car;
 
 import lombok.Data;
 

@@ -1,24 +1,28 @@
 package com.maciej.cars.service;
 
-import com.maciej.cars.Car;
+import com.maciej.cars.dao.FeatureRepository;
+import com.maciej.cars.dto.car.AddFeatureDTO;
+import com.maciej.cars.model.Car;
 import com.maciej.cars.dao.CarRepository;
-import com.maciej.cars.dto.CarDto;
-import com.maciej.cars.dto.NewCarDto;
-import com.maciej.cars.dto.UpdateCarDto;
+import com.maciej.cars.dto.car.CarDto;
+import com.maciej.cars.dto.car.NewCarDto;
+import com.maciej.cars.dto.car.UpdateCarDto;
 import com.maciej.cars.exception.CarNotFoundException;
+import com.maciej.cars.model.Feature;
 import com.maciej.cars.utils.DummyUtils;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class CarServiceImpl implements CarService {
 
     private final CarRepository carRepository;
+
+    private final FeatureRepository featureRepository;
 
     private final DummyUtils utils;
 
@@ -42,9 +46,9 @@ public class CarServiceImpl implements CarService {
     }
 
     public CarDto getCar(long id) {
-        Car car =  carRepository.findById(id).orElseThrow(()-> new CarNotFoundException("Car with ID " + id + " not found"));
+        Car car = carRepository.findById(id).orElseThrow(() -> new CarNotFoundException("Car with ID " + id + " not found"));
 
-        return mapper.map(car,CarDto.class);
+        return mapper.map(car, CarDto.class);
     }
 
     @Override
@@ -54,6 +58,22 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public List<CarDto> findAll() {
-        return carRepository.findAll().stream().map(c-> mapper.map(c,CarDto.class)).toList();
+        return carRepository.findAll().stream().map(c -> mapper.map(c, CarDto.class)).toList();
+    }
+
+    @Override
+    public CarDto addCarFeatures(AddFeatureDTO addFeatureDTO) {
+        Long carId = addFeatureDTO.getCarId();
+        List<Long> featureIds = addFeatureDTO.getFeatureIds();
+
+        Car car = carRepository.findById(carId)
+                .orElseThrow(() -> new CarNotFoundException("Car not found id {" + carId + "}"));
+
+        List<Feature> featuresToAdd
+                = featureRepository.findAllById(featureIds);
+        featuresToAdd.forEach(car::addFeature);
+
+        Car updatedCar = carRepository.save(car);
+        return mapper.map(updatedCar, CarDto.class);
     }
 }

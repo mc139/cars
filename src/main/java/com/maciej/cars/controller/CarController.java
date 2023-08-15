@@ -1,11 +1,13 @@
 package com.maciej.cars.controller;
 
-import com.maciej.cars.dto.CarDto;
-import com.maciej.cars.dto.NewCarDto;
-import com.maciej.cars.dto.UpdateCarDto;
+import com.maciej.cars.dto.car.AddFeatureDTO;
+import com.maciej.cars.dto.car.CarDto;
+import com.maciej.cars.dto.car.NewCarDto;
+import com.maciej.cars.dto.car.UpdateCarDto;
 import com.maciej.cars.service.CarService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,37 +20,45 @@ public class CarController {
     private final CarService carService;
 
     @PostMapping
-    public CarDto addCar(@RequestBody NewCarDto newCarDto) {
-        return carService.addCar(newCarDto);
+    public ResponseEntity<CarDto> addCar(@RequestBody NewCarDto newCarDto) {
+        CarDto addedCar = carService.addCar(newCarDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(addedCar);
     }
 
     @PostMapping("/populate/{number}")
-    public void addCar(@PathVariable long number) {
+    public ResponseEntity<Void> populate(@PathVariable long number) {
         carService.prepareDummyData(number);
-    }
-
-    @PostMapping("/populate2/{number}")
-    public void addCar2(@PathVariable long number) {
-        carService.prepareDummyData(number);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{carId}")
-    public void deleteCar(@PathVariable long carId) {
+    public ResponseEntity<Void> deleteCar(@PathVariable long carId) {
         carService.deleteCar(carId);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping
-    public CarDto updateCar(@RequestBody UpdateCarDto updateCarDto) {
-        return carService.updateCar(updateCarDto);
+    public ResponseEntity<CarDto> updateCar(@RequestBody UpdateCarDto updateCarDto) {
+        CarDto updatedCar = carService.updateCar(updateCarDto);
+        return ResponseEntity.ok(updatedCar);
     }
 
     @GetMapping("/{id}")
-    public CarDto getCar(@PathVariable long id) {
-        return carService.getCar(id);
+    public ResponseEntity<CarDto> getCar(@PathVariable long id) {
+        CarDto car = carService.getCar(id);
+        return ResponseEntity.ok(car);
     }
 
     @GetMapping
-    public List<CarDto> getAll() {
-        return carService.findAll();
+    public ResponseEntity<List<CarDto>> getAll() {
+        List<CarDto> cars = carService.findAll();
+        return ResponseEntity.ok(cars);
     }
+
+    @PostMapping("/feature")
+    public ResponseEntity<CarDto> addCarFeatures(@RequestBody AddFeatureDTO addFeatureDTO) {
+        CarDto updatedCar = carService.addCarFeatures(addFeatureDTO);
+        return ResponseEntity.ok(updatedCar);
+    }
+
 }
