@@ -1,2 +1,15 @@
-package com.maciej.cars.dto;public class NewCarDto {
+package com.maciej.cars.dto;
+
+import lombok.Data;
+
+import java.math.BigDecimal;
+
+@Data
+public class NewCarDto {
+    private int yearOfManufacture;
+    private int mileage;
+    private BigDecimal basePrice;
+    private String make;
+    private String description;
+
 }
