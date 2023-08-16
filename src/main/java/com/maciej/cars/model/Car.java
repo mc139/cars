@@ -2,6 +2,7 @@ package com.maciej.cars.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +16,7 @@ import java.util.Set;
 @Table(name = "cars")
 @Data
 @NoArgsConstructor
+@Builder
 public class Car extends BaseEntity {
 
     public Car(int yearOfManufacture, int mileage, BigDecimal basePrice, BigDecimal totalPrice, String make, String description, Set<Feature> features) {

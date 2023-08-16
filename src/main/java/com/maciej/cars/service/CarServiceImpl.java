@@ -15,6 +15,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,8 +28,6 @@ public class CarServiceImpl implements CarService {
     private final DummyUtils utils;
 
     private final ModelMapper mapper;
-    //TODO Validator
-    //TODO PAGINATION
 
     public CarDto addCar(NewCarDto newCarDto) {
         Car car = carRepository.saveAndFlush(mapper.map(newCarDto, Car.class));
@@ -39,9 +38,16 @@ public class CarServiceImpl implements CarService {
         deleteCar(carId);
     }
 
-    public CarDto updateCar(UpdateCarDto updateCarDto) {
-        //todo implement
-        return null;
+    public CarDto updateCar(UpdateCarDto updateCarDto,long carId) {
+        Car existingCar = carRepository.findById(carId).orElseThrow(()-> new CarNotFoundException("Car not found with id: " + carId));
+
+        existingCar.setDescription(updateCarDto.getDescription());
+        existingCar.setYearOfManufacture(updateCarDto.getYearOfManufacture());
+        existingCar.setMileage(updateCarDto.getMileage());
+        existingCar.setBasePrice(updateCarDto.getBasePrice());
+        existingCar.setMake(updateCarDto.getMake());
+
+        return mapper.map(carRepository.saveAndFlush(existingCar), CarDto.class);
 
     }
 
@@ -76,4 +82,5 @@ public class CarServiceImpl implements CarService {
         Car updatedCar = carRepository.save(car);
         return mapper.map(updatedCar, CarDto.class);
     }
+
 }
