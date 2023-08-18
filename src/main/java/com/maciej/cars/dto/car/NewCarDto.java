@@ -13,9 +13,14 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class NewCarDto {
     private int yearOfManufacture;
+
     private int mileage;
+
     private BigDecimal basePrice;
+
     private String make;
+
     private String description;
+
 
 }

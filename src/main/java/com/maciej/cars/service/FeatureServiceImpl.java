@@ -22,6 +22,7 @@ public class FeatureServiceImpl implements FeatureService {
     private final ModelMapper modelMapper;
 
     private final DummyUtils utils;
+
     @Override
     public FeatureDTO createFeature(FeatureCreateDTO createDTO) {
         Feature feature = modelMapper.map(createDTO, Feature.class);

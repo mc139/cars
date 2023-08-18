@@ -1,12 +1,11 @@
 package com.maciej.cars.utils;
 
 import com.github.javafaker.Faker;
+import com.maciej.cars.dao.CarRepository;
 import com.maciej.cars.dao.FeatureRepository;
 import com.maciej.cars.model.Car;
-import com.maciej.cars.dao.CarRepository;
 import com.maciej.cars.model.Feature;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -30,10 +29,10 @@ public class DummyUtils {
 
     private Car prepareCar() {
         Car car = new Car();
-        car.setYearOfManufacture(faker.number().numberBetween(1960,2023));
-        car.setMileage(faker.random().nextInt(1,1111111111));
+        car.setYearOfManufacture(faker.number().numberBetween(1960, 2023));
+        car.setMileage(faker.random().nextInt(1, 1111111111));
         car.setMake(faker.animal().name());
-        car.setBasePrice(BigDecimal.valueOf(faker.number().numberBetween(10002,53777)));
+        car.setBasePrice(BigDecimal.valueOf(faker.number().numberBetween(10002, 53777)));
         car.setDescription(faker.howIMetYourMother().catchPhrase());
         return car;
     }
@@ -49,7 +48,7 @@ public class DummyUtils {
     private Feature prepareFeature() {
         Feature feature = new Feature();
         feature.setName(faker.superhero().name());
-        feature.setPrice(BigDecimal.valueOf(faker.number().numberBetween(1000,10000)));
+        feature.setPrice(BigDecimal.valueOf(faker.number().numberBetween(1000, 10000)));
         return feature;
     }
 }

@@ -1,13 +1,13 @@
 package com.maciej.cars.service;
 
+import com.maciej.cars.dao.CarRepository;
 import com.maciej.cars.dao.FeatureRepository;
 import com.maciej.cars.dto.car.AddFeatureDTO;
-import com.maciej.cars.model.Car;
-import com.maciej.cars.dao.CarRepository;
 import com.maciej.cars.dto.car.CarDto;
 import com.maciej.cars.dto.car.NewCarDto;
 import com.maciej.cars.dto.car.UpdateCarDto;
 import com.maciej.cars.exception.CarNotFoundException;
+import com.maciej.cars.model.Car;
 import com.maciej.cars.model.Feature;
 import com.maciej.cars.utils.DummyUtils;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -38,8 +37,8 @@ public class CarServiceImpl implements CarService {
         deleteCar(carId);
     }
 
-    public CarDto updateCar(UpdateCarDto updateCarDto,long carId) {
-        Car existingCar = carRepository.findById(carId).orElseThrow(()-> new CarNotFoundException("Car not found with id: " + carId));
+    public CarDto updateCar(UpdateCarDto updateCarDto, long carId) {
+        Car existingCar = carRepository.findById(carId).orElseThrow(() -> new CarNotFoundException("Car not found with id: " + carId));
 
         existingCar.setDescription(updateCarDto.getDescription());
         existingCar.setYearOfManufacture(updateCarDto.getYearOfManufacture());

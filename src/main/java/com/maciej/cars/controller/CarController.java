@@ -1,5 +1,6 @@
 package com.maciej.cars.controller;
 
+import com.maciej.cars.config.publisher.RabbitMQProducer;
 import com.maciej.cars.dto.car.AddFeatureDTO;
 import com.maciej.cars.dto.car.CarDto;
 import com.maciej.cars.dto.car.NewCarDto;
@@ -18,6 +19,8 @@ import java.util.List;
 public class CarController {
 
     private final CarService carService;
+
+    private final RabbitMQProducer rabbitMQProducer;
 
     @PostMapping
     public ResponseEntity<CarDto> addCar(@RequestBody NewCarDto newCarDto) {
@@ -39,12 +42,13 @@ public class CarController {
 
     @PutMapping("/{carId}")
     public ResponseEntity<CarDto> updateCar(@PathVariable long carId, @RequestBody UpdateCarDto updateCarDto) {
-        CarDto updatedCar = carService.updateCar(updateCarDto,carId);
+        CarDto updatedCar = carService.updateCar(updateCarDto, carId);
         return ResponseEntity.ok(updatedCar);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CarDto> getCar(@PathVariable long id) {
+        rabbitMQProducer.sendMessage("car.get");
         CarDto car = carService.getCar(id);
         return ResponseEntity.ok(car);
     }
