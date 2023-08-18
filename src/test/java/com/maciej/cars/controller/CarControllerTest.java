@@ -2,28 +2,23 @@ package com.maciej.cars.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.maciej.cars.dto.car.AddFeatureDTO;
+import com.maciej.cars.config.publisher.RabbitMQProducer;
 import com.maciej.cars.dto.car.CarDto;
 import com.maciej.cars.dto.car.NewCarDto;
 import com.maciej.cars.dto.car.UpdateCarDto;
 import com.maciej.cars.service.CarService;
-import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
-
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -31,22 +26,21 @@ import java.util.stream.IntStream;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.*;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 class CarControllerTest {
 
+    private final Gson gson = new Gson();
+    @Mock
+    private RabbitMQProducer rabbitMQProducer;
     @Mock
     private CarService carService;
-
     @InjectMocks
     private CarController underTest;
+    private MockMvc mockMvc;
 
-    private final Gson gson = new Gson();
-
-    private  MockMvc mockMvc;
     @BeforeEach
     public void setup() {
         mockMvc = MockMvcBuilders.standaloneSetup(underTest).build(); // Initialize MockMvc
@@ -80,8 +74,8 @@ class CarControllerTest {
 
         // Perform the controller action using MockMvc
         MvcResult result = mockMvc.perform(post("/car")
-                .content(gson.toJson(newCarDto)) // Fixed line
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(gson.toJson(newCarDto)) // Fixed line
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn();
 
@@ -183,7 +177,8 @@ class CarControllerTest {
                 .andReturn();
 
         String responseContent = result.getResponse().getContentAsString();
-        List<CarDto> responseCars = gson.fromJson(responseContent, new TypeToken<List<CarDto>>(){}.getType());
+        List<CarDto> responseCars = gson.fromJson(responseContent, new TypeToken<List<CarDto>>() {
+        }.getType());
 
         verify(carService).findAll();
 
@@ -194,6 +189,7 @@ class CarControllerTest {
     @Test
     void addCarFeatures() {
     }
+
     private List<CarDto> createExampleCarDtoList(int count) {
         return IntStream.range(0, count)
                 .mapToObj(i -> CarDto.builder()

@@ -9,18 +9,18 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class CarsApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(CarsApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(CarsApplication.class, args);
+    }
 
-	@Bean
-	public ModelMapper getModelMapper(){
-		return new ModelMapper();
-	}
+    @Bean
+    public ModelMapper getModelMapper() {
+        return new ModelMapper();
+    }
 
-	@Bean
-	public Faker getFaker(){
-		return new Faker();
-	}
+    @Bean
+    public Faker getFaker() {
+        return new Faker();
+    }
 
 }

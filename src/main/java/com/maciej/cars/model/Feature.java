@@ -1,6 +1,5 @@
 package com.maciej.cars.model;
 
-import com.maciej.cars.model.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
