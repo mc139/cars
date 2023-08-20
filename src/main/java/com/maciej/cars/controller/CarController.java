@@ -45,7 +45,7 @@ public class CarController {
     public ResponseEntity<CarDto> addCar(@RequestBody NewCarDto newCarDto) {
         CarDto addedCar = carService.addCar(newCarDto);
         Car car = mapper.map(addedCar, Car.class);
-        logger.info("Added {} ",car.toString());
+        logger.info("Added {} ",addedCar.toString());
         rabbitMQJsonProducer.sendJsonMessage(car);
         return ResponseEntity.status(HttpStatus.CREATED).body(addedCar);
     }

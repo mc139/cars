@@ -7,12 +7,16 @@ import com.maciej.cars.config.publisher.RabbitMQProducer;
 import com.maciej.cars.dto.car.CarDto;
 import com.maciej.cars.dto.car.NewCarDto;
 import com.maciej.cars.dto.car.UpdateCarDto;
+import com.maciej.cars.matchers.ModelMapperArgumentMatcher;
+import com.maciej.cars.model.Car;
 import com.maciej.cars.service.CarService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.MediaType;
@@ -27,8 +31,16 @@ import java.util.stream.IntStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.argThat;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,10 +55,13 @@ class CarControllerTest {
 
     @Mock
     private CarService carService;
+
     @Mock
     private ModelMapper modelMapper;
+
     @InjectMocks
     private CarController underTest;
+
     private MockMvc mockMvc;
 
     @BeforeEach
@@ -77,15 +92,16 @@ class CarControllerTest {
                 .description("New car description")
                 .build();
 
+
         // Mock the service's behavior
         when(carService.addCar(any(NewCarDto.class))).thenReturn(expectedCarDto);
+        doReturn(new Car()).when(modelMapper).map(Mockito.any(CarDto.class), eq(Car.class));
 
-        // Perform the controller action using MockMvc
-        MvcResult result = mockMvc.perform(post("/car")
-                        .content(gson.toJson(newCarDto)) // Fixed line
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andReturn();
+                MvcResult result = mockMvc.perform(post("/car")
+                                .content(gson.toJson(newCarDto)) // Fixed line
+                                .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isCreated())
+                        .andReturn();
 
         // Use Gson to deserialize the response body
         CarDto responseCarDto = gson.fromJson(result.getResponse().getContentAsString(), CarDto.class);
