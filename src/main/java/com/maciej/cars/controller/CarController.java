@@ -1,17 +1,30 @@
 package com.maciej.cars.controller;
 
+import com.maciej.cars.config.publisher.RabbitMQJsonProducer;
 import com.maciej.cars.config.publisher.RabbitMQProducer;
 import com.maciej.cars.dto.car.AddFeatureDTO;
 import com.maciej.cars.dto.car.CarDto;
 import com.maciej.cars.dto.car.NewCarDto;
 import com.maciej.cars.dto.car.UpdateCarDto;
+import com.maciej.cars.model.Car;
 import com.maciej.cars.service.CarService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/car")
@@ -22,9 +35,18 @@ public class CarController {
 
     private final RabbitMQProducer rabbitMQProducer;
 
+    private final RabbitMQJsonProducer rabbitMQJsonProducer;
+
+    private final ModelMapper mapper;
+
+    private static final Logger logger = LoggerFactory.getLogger(CarController.class);
+
     @PostMapping
     public ResponseEntity<CarDto> addCar(@RequestBody NewCarDto newCarDto) {
         CarDto addedCar = carService.addCar(newCarDto);
+        Car car = mapper.map(addedCar, Car.class);
+        logger.info("Added {} ",car.toString());
+        rabbitMQJsonProducer.sendJsonMessage(car);
         return ResponseEntity.status(HttpStatus.CREATED).body(addedCar);
     }
 
